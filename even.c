@@ -3,39 +3,48 @@
 #include <signal.h>
 #include <unistd.h>
 
-// Signal handler for HUP
+volatile sig_atomic_t hup_received = 0;
+volatile sig_atomic_t int_received = 0;
+
 void hupHandler(int signum) {
-    printf("Ouch!\n");
+    hup_received = 1;
 }
 
-// Signal handler for INT
 void intHandler(int signum) {
-    printf("Yeah!\n");
+    int_received = 1;
 }
 
 int main(int argc, char *argv[]) {
-    // Set signal handlers
     signal(SIGHUP, hupHandler);
     signal(SIGINT, intHandler);
 
     if (argc != 2) {
-        fprintf(stderr, "The format of the command line is ./even : %s <n>\n", argv[0]);
+        fprintf(stderr, "Usage: %s <n>\n", argv[0]);
         return 1;
     }
 
-    int count = atoi(argv[1]);
-    if (count <= 0) {
-        fprintf(stderr, "Invalid input number must be a positive integer\n");
+    int n = atoi(argv[1]);
+    if (n <= 0) {
+        fprintf(stderr, "Invalid input: n must be a positive integer\n");
         return 1;
     }
 
     int evenNumber = 0;
 
-    for (int i = 0; i < count; i += 2) {
+    while (n > 0 && !hup_received && !int_received) {
         printf("%d\n", evenNumber);
-        fflush(stdout);  // Flush output to ensure it's displayed
-        sleep(5);  // Sleep for 5 seconds
+        fflush(stdout);
+        sleep(5);
         evenNumber += 2;
+        n--;
+    }
+
+    if (hup_received) {
+        printf("Ouch!\n");
+    }
+
+    if (int_received) {
+        printf("Yeah!\n");
     }
 
     return 0;

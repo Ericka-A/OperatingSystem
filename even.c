@@ -1,23 +1,27 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <signal.h>
+#include <pthread.h>
 #include <unistd.h>
 
-volatile sig_atomic_t hup_received = 0;
-volatile sig_atomic_t int_received = 0;
+volatile int hup_received = 0;
+volatile int int_received = 0;
 
-void hupHandler(int signum) {
-    hup_received = 1;
-}
-
-void intHandler(int signum) {
-    int_received = 1;
+void *signalHandlerThread(void *arg) {
+    while (1) {
+        if (hup_received) {
+            printf("Ouch!\n");
+            break;
+        }
+        if (int_received) {
+            printf("Yeah!\n");
+            break;
+        }
+        usleep(100000);  // Sleep for 0.1 seconds
+    }
+    return NULL;
 }
 
 int main(int argc, char *argv[]) {
-    signal(SIGHUP, hupHandler);
-    signal(SIGINT, intHandler);
-
     if (argc != 2) {
         fprintf(stderr, "Usage: %s <n>\n", argv[0]);
         return 1;
@@ -29,6 +33,9 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
+    pthread_t thread;
+    pthread_create(&thread, NULL, signalHandlerThread, NULL);
+
     int evenNumber = 0;
 
     while (n > 0 && !hup_received && !int_received) {
@@ -39,13 +46,16 @@ int main(int argc, char *argv[]) {
         n--;
     }
 
+    // Set the corresponding flag to simulate signal handling
     if (hup_received) {
-        printf("Ouch!\n");
+        hup_received = 0;
     }
 
     if (int_received) {
-        printf("Yeah!\n");
+        int_received = 0;
     }
+
+    pthread_join(thread, NULL);
 
     return 0;
 }

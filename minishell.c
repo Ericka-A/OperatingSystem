@@ -23,6 +23,7 @@
 
 char line[NL];	/* command input buffer */
 char lineCopyBackup[NL];
+int backgroundCounter = 0;
 
 
 void prompt()
@@ -124,13 +125,19 @@ int main(int argk, char *argv[], char *envp[])
     case 0:			/* code executed only by child process */
       {
 
+					if (isBackground) {
+						backgroundCounter++;
+						printf("[%d] %d\n", backgroundCounter, getpid());
+						fflush(stdout);
+					}        
+
 	    execvp(v[0], v);
 	
       }
     default:			/* code executed only by parent process */
       {
 	    //wpid = wait(0);
-	    printf("%s done \n", v[0]);
+	    //printf("%s done \n", v[0]);
 	    break;
       }
     }	      

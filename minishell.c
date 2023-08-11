@@ -16,6 +16,7 @@
 #include <stdlib.h>
 #include <signal.h>
 #include <stdbool.h>
+#include <stdbool.h>
 
 #define NV 20			/* max number of command tokens */
 #define NL 100			/* input buffer size */
@@ -43,6 +44,7 @@ int main(int argk, char *argv[], char *envp[])
   char     *v[NV];	/* array of pointers to command line tokens */
   char     *sep = " \t\n";/* command line token separators    */
   int       i;		/* parse index */
+  bool isBackground;
 
 
   /* prompt for and process one command line at a time  */
@@ -90,26 +92,51 @@ int main(int argk, char *argv[], char *envp[])
 				continue;
 			}
 		}
-    /* assert i is number of tokens + 1 */
 
-    /* fork a child process to exec the command in v[0] */
+    else{
 
+		  isBackground = (strcmp(v[i - 1], "&") == 0);
+
+			if (isBackground) {
+		
+				isBackground = true;
+				v[i - 1] = NULL;
+
+			
+				int len = strlen(lineCopyBackup);
+				if (len - 3 >= 0) {
+					lineCopyBackup[len - 3] = '\0';
+				}
+				else if (len - 2 >= 0) {
+					lineCopyBackup[len - 2] = '\0';
+				}
+				else {
+					
+				}
+				
+			}      
+    
     switch (PidChildren = fork()) {
     case -1:			/* fork returns error to parent process */
       {
-	break;
+	      break;
       }
     case 0:			/* code executed only by child process */
       {
-	execvp(v[0], v);
+
+	    execvp(v[0], v);
 	
       }
     default:			/* code executed only by parent process */
       {
-	//wpid = wait(0);
-	printf("%s done \n", v[0]);
-	break;
+	    //wpid = wait(0);
+	    printf("%s done \n", v[0]);
+	    break;
       }
-    }				/* switch */
+    }	      
+    }
+    /* assert i is number of tokens + 1 */
+
+    /* fork a child process to exec the command in v[0] */
   }				/* while */
 }				/* main */

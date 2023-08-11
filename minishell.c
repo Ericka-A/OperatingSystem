@@ -15,6 +15,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <signal.h>
+#include <stdbool.h>
 
 #define NV 20			/* max number of command tokens */
 #define NL 100			/* input buffer size */
@@ -42,6 +43,7 @@ int main(int argk, char *argv[], char *envp[])
   char     *v[NV];	/* array of pointers to command line tokens */
   char     *sep = " \t\n";/* command line token separators    */
   int       i;		/* parse index */
+  bool isBackground;
 
   /* prompt for and process one command line at a time  */
 
@@ -72,6 +74,44 @@ int main(int argk, char *argv[], char *envp[])
       if (v[i] == NULL)
       break;
     }
+
+		if (strcmp(v[0], "cd") == 0) {
+			if (v[1] != NULL) {
+				if (chdir(v[1]) != 0) {
+
+					continue;
+				}
+				else {
+					
+				}
+			}
+			else {
+		
+				continue;
+			}
+		}
+		else {
+
+			isBackground = (strcmp(v[i - 1], "&") == 0);
+			if (isBackground) {
+		
+				isBackground = true;
+				v[i - 1] = NULL;
+
+			
+				int len = strlen(lineCopyBackup);
+				if (len - 3 >= 0) {
+					lineCopyBackup[len - 3] = '\0';
+				}
+				else if (len - 2 >= 0) {
+					lineCopyBackup[len - 2] = '\0';
+				}
+				else {
+					
+				}
+				
+			}
+
     /* assert i is number of tokens + 1 */
 
     /* fork a child process to exec the command in v[0] */

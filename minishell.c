@@ -53,7 +53,7 @@ int main(int argc, char *argv[], char *envp[]) {
     bool isBackground;
 
     while (1) {
-        prompt();
+        //prompt();
         fgets(line, NL, stdin);
         fflush(stdin);
 

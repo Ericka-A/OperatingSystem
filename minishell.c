@@ -15,6 +15,7 @@ int pidChild;		 /* value returned by fork sys call */
 char line[NL];          /* command input buffer */
 char lineCopy[NL];
 int backgroundCounter = 0;
+int i;
 
 typedef enum {
     UnAssigned,
@@ -98,7 +99,7 @@ int main(int argc, char *argv[], char *envp[])
 
         v[0] = strtok(line, sep);
 
-        int i;
+        
         for (i = 1; i < NV; i++)
         {
             v[i] = strtok(NULL, sep);

@@ -55,7 +55,6 @@ int main(int argc, char *argv[], char *envp[]) {
 
     while (1) {
         //prompt();
-        printf("msh> ");
         fgets(line, NL, stdin);
         fflush(stdin);
 
@@ -82,13 +81,11 @@ int main(int argc, char *argv[], char *envp[]) {
         if (strcmp(v[0], "cd") == 0) {
             if (v[1] != NULL) {
                 if (chdir(v[1]) != 0) {
-                    perror("cd");
+                    continue;
                 }
             } else {
-                // Go to home directory
-                chdir(getenv("HOME"));
+                continue;
             }
-            continue;
         } else {
             isBackground = (strcmp(v[i - 1], "&") == 0);
 
@@ -105,7 +102,7 @@ int main(int argc, char *argv[], char *envp[]) {
                 }
             }
 
-            switch (pidChild = fork()) {
+            switch (pidChild =fork()) {
                 case -1: /* fork returns error to parent process */
                 {
                     break;
@@ -122,14 +119,14 @@ int main(int argc, char *argv[], char *envp[]) {
                     }
 
                     execvp(v[0], v);
-                    perror("execvp");
-                    exit(1);
+                    exit(0);
                 }
                 default: /* code executed only by parent process */
                 {
                     if (!isBackground) {
-                        int status;
-                        waitpid(pidChild, &status, 0);
+						int status;
+						waitpid(pidChild, &status, 0); 
+						checkForCompletedbackgroundProcess(); 
                     } else {
                         checkForCompletedbackgroundProcess();
                     }

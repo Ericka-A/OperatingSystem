@@ -126,9 +126,9 @@ int main(int argc, char *argv[], char *envp[]) {
                     if (!isBackground) {
 						int status;
 						waitpid(pidChild, &status, 0); 
-						checkForCompletedBgProcesses(); 
+						checkForCompletedbackgroundProcess(); 
                     } else {
-                        checkForCompletedBgProcesses();
+                        checkForCompletedbackgroundProcess();
                     }
                     break;
                 }

@@ -174,6 +174,10 @@ int main(int argc, char *argv[], char *envp[])
                         strncpy(backgroundProcess[backgroundCounter].command, lineCopy, NL);
                         backgroundProcess[backgroundCounter].status = ProcessRunning;
 
+                        for (int i = 0; i < strlen(lineCopy); ++i) {
+							backgroundProcess[backgroundCounter].command[i] = lineCopy[i];
+						}
+
                         checkForCompletedbackgroundProcess();
                     }
                     break;

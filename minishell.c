@@ -116,6 +116,9 @@ int main(int argc, char *argv[], char *envp[])
                 {
                     continue;
                 }
+                else{
+
+                }
             }
             else
             {
@@ -138,6 +141,9 @@ int main(int argc, char *argv[], char *envp[])
                 else if (len - 2 >= 0)
                 {
                     lineCopy[len - 2] = '\0';
+                }
+                else{
+                    //donothing 
                 }
 
             }

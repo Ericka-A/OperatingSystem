@@ -55,6 +55,7 @@ int main(int argc, char *argv[], char *envp[]) {
 
     while (1) {
         //prompt();
+        printf("msh> ");
         fgets(line, NL, stdin);
         fflush(stdin);
 
@@ -81,11 +82,13 @@ int main(int argc, char *argv[], char *envp[]) {
         if (strcmp(v[0], "cd") == 0) {
             if (v[1] != NULL) {
                 if (chdir(v[1]) != 0) {
-                    continue;
+                    perror("cd");
                 }
             } else {
-                continue;
+                // Go to home directory
+                chdir(getenv("HOME"));
             }
+            continue;
         } else {
             isBackground = (strcmp(v[i - 1], "&") == 0);
 
@@ -102,7 +105,7 @@ int main(int argc, char *argv[], char *envp[]) {
                 }
             }
 
-            switch (pidChild =fork()) {
+            switch (pidChild = fork()) {
                 case -1: /* fork returns error to parent process */
                 {
                     break;
@@ -110,7 +113,7 @@ int main(int argc, char *argv[], char *envp[]) {
                 case 0: /* code executed only by child process */
                 {
                     if (isBackground) {
-                        printf("[%d] %d\n", backgroundCounter, getpid());
+                        printf("[%d] %d\n", backgroundCounter, getpid()); //formed this logic with help of Geeks for Geeks and chatGpt
                         fflush(stdout);
                         backgroundProcess[backgroundCounter].pid = getpid();
                         backgroundProcess[backgroundCounter].counter = backgroundCounter;
@@ -119,14 +122,14 @@ int main(int argc, char *argv[], char *envp[]) {
                     }
 
                     execvp(v[0], v);
-                    exit(0);
+                    perror("execvp");
+                    exit(1);
                 }
                 default: /* code executed only by parent process */
                 {
                     if (!isBackground) {
-						int status;
-						waitpid(pidChild, &status, 0); 
-						checkForCompletedbackgroundProcess(); 
+                        int status;
+                        waitpid(pidChild, &status, 0);
                     } else {
                         checkForCompletedbackgroundProcess();
                     }

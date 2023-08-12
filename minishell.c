@@ -68,6 +68,9 @@ void prompt(void)
 }
 
 int main(int argc, char *argv[], char *envp[])
+/* argk - number of arguments */
+/* argv - argument vector from command line */
+/* envp - environment pointer */
 {
     int childPid;
     char *v[NV];
@@ -151,14 +154,9 @@ int main(int argc, char *argv[], char *envp[])
                         backgroundCounter++;
                         printf("[%d] %d\n", backgroundCounter, getpid()); //extern __pid_t getpid (void) __THROW;
                         fflush(stdout);
-
-                        backgroundProcess[backgroundCounter].pid = getpid();
-                        backgroundProcess[backgroundCounter].counter = backgroundCounter;
-                        strncpy(backgroundProcess[backgroundCounter].command, lineCopy, NL);
-                        backgroundProcess[backgroundCounter].status = ProcessRunning;
                     }
                     execvp(v[0], v);
-                    exit(0);
+                    
                 }
                 default:
                 {
